@@ -1,0 +1,14 @@
+version: '3'
+services:
+  app:
+    build: .
+    image: flask
+    container_name: python-flask
+    restart: unless-stopped
+    ports:
+      - "5024:5000"
+    environment:
+        FLASK_APP: app.py
+        FLASK_ENV: development
+        FLASK_DEBUG: 1
+    command: flask run --host=0.0.0.0
