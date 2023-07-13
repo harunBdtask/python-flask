@@ -2,3 +2,6 @@ flask
 redis
 python-dotenv
 js
+numpy
+pandas
+scipy
