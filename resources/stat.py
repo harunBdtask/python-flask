@@ -1,13 +1,53 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 import numpy as np
 from scipy.stats import pearsonr
 from scipy.stats import linregress
+from sklearn import linear_model
 stat = Blueprint('stat', __name__)
 # Simple Route
 @stat.route('/home')
 def home():
     return 'Hello, Stat!'
-# Example route for returning a JSON response
+# post request demo
+@stat.route('/demo', methods=['POST'])
+def demo():
+    # Access the request parameters
+    name = request.form.get('name')
+
+    data = request.get_json()
+     # Access the parameters from the JSON data
+    name = data.get('name')
+    cart_details = data.get('cart_details')
+    # Create a response
+    response = {'name': name, 'cart_details':cart_details}
+
+    return jsonify(response)
+# extrapolation route
+@stat.route('/extrapolation')
+def extrapolation():
+    # Year=[2010,2011,2012,2013,2014]
+    # Death=[25,30,24,26,31]
+    Year=[2016,2017,2018,2019]
+    Death=[25,30,20,25]
+    X = np.array(Year)
+    y = np.array(Death)
+    X = X.reshape(-1,1)
+    y = y.reshape(-1,1)
+    regr = linear_model.LinearRegression()
+    regr.fit(X, y)
+    Year_1=Year[-1]+1
+    mymodel = np.poly1d(np.polyfit(Year, Death, 3))
+    A = np.array(Year)
+    B = np.array(Death)
+    fit = np.polyfit(np.log(A), B, 1)
+    theDict = {
+        'linear': str(regr.predict([[Year_1]])),
+        'polynomial': round(mymodel(Year_1),2),
+        'logarithmic': str(fit)
+    }
+    return jsonify(theDict)
+
+# correlation route
 @stat.route('/correlation')
 def correlation():
     X_Variable=[1,2,3,4,5,6,7]

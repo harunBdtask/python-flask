@@ -5,3 +5,4 @@ js
 numpy
 pandas
 scipy
+scikit-learn
