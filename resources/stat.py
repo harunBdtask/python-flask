@@ -23,29 +23,37 @@ def demo():
 
     return jsonify(response)
 # extrapolation route
-@stat.route('/extrapolation')
+@stat.route('/extrapolation', methods=['POST'])
 def extrapolation():
-    # Year=[2010,2011,2012,2013,2014]
-    # Death=[25,30,24,26,31]
-    Year=[2016,2017,2018,2019]
-    Death=[25,30,20,25]
-    X = np.array(Year)
-    y = np.array(Death)
+    data = request.get_json()
+    year = data.get('year')
+    death = data.get('death')
+    # predictionMethod = data.get('prediction_method')
+    # year=[2010,2011,2012,2013,2014]
+    # death=[25,30,24,26,31]
+    predictionMethod = "Linear_Regrddession" # Linear_Regression, Polynomial_Regression, Logarithmic_Regression
+    X = np.array(year)
+    y = np.array(death)
     X = X.reshape(-1,1)
     y = y.reshape(-1,1)
     regr = linear_model.LinearRegression()
     regr.fit(X, y)
-    Year_1=Year[-1]+1
-    mymodel = np.poly1d(np.polyfit(Year, Death, 3))
-    A = np.array(Year)
-    B = np.array(Death)
-    fit = np.polyfit(np.log(A), B, 1)
-    theDict = {
-        'linear': str(regr.predict([[Year_1]])),
-        'polynomial': round(mymodel(Year_1),2),
-        'logarithmic': str(fit)
-    }
-    return jsonify(theDict)
+    if predictionMethod == "Polynomial_Regression":
+        return str(regr.predict([[year_1]]))
+    elif predictionMethod == "Logarithmic_Regression":
+        return str(regr.predict([[year_1]]))
+    else:
+        year_1=year[-1]+1
+        mymodel = np.poly1d(np.polyfit(year, death, 3))
+        A = np.array(year)
+        B = np.array(death)
+        fit = np.polyfit(np.log(A), B, 1)
+        theDict = {
+            'linear': str(regr.predict([[year_1]])),
+            'polynomial': round(mymodel(year_1),2),
+            'logarithmic': str(fit)
+        }
+        return jsonify(theDict)
 
 # correlation route
 @stat.route('/correlation')
